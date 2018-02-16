@@ -1,0 +1,18 @@
+{{ .Project }}-lb:
+  image: rancher/lb-service-haproxy:v0.6.4
+  ports:
+    - 8000:8000/tcp
+  labels:
+    io.rancher.container.agent.role: environmentAdmin
+    io.rancher.container.create_agent: 'true'
+
+{{ .Project }}-gateway-service:
+  image: {{ .DockerRepo }}/gateway-service:{{ .Tag }}
+  environment:
+    RANCHER_SERVICE_DISCOVERY: 'true'
+    AUTH_API_TOKEN_SALT: ${auth_salt}
+    ACTIVE_PROFILES=${cm_profiles}
+    JVM_OPTS=-Xmx2048m
+  labels:
+    io.rancher.container.pull_image: always
+    io.rancher.container.hostname_override: container_name
